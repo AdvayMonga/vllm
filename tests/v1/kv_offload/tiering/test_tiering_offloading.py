@@ -2174,9 +2174,10 @@ def test_cascade_store_feeds_backpressure_only_written_bytes(tmp_path, monkeypat
 
     try:
         manager.on_new_request(_CTX)
+        trigger = StoreTrigger.ON_COMPUTE
         for keys in (to_keys([1, 2]), to_keys([3, 4]), to_keys([5, 6])):
-            assert manager.prepare_store(keys, _CTX) is not None
-            manager.complete_store(keys, _CTX)  # cascades to the fs tier
+            assert manager.prepare_store(keys, _CTX, trigger=trigger) is not None
+            manager.complete_store(keys, _CTX, trigger=trigger)  # cascades to fs tier
             tier.drain_jobs()
             manager._process_finished_jobs()
     finally:
